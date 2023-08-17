@@ -1,0 +1,309 @@
+{{- $registry := .Values.registry | default "srregis.azurecr.io" }}
+  {{- $name := .Values.deployment_server.name | default "sr-algo"}}
+  {{- $appName := .Values.appName | default "sr-algo" }}
+  {{- $imageName := .Values.imageName | default "lmy/sr-algo" }}
+  {{- $versionTag := .Values.versionTag | default "latest" }}
+  {{- $namespace := .Values.namespace }}
+  {{- $requestGpu := .Values.deployment_server.container.requestGpu | default 0 }}
+  {{- $storageName := .Values.storage.name }}
+  {{- $env := .Values.env | default "dev" }}
+  {{- $registryPullSecret := .Values.registryPullSecret }}
+  {{- $nodeAffintyLabel := .Values.nodeAffinityLabel | default "default" }}
+  {{- $replicaCount := .Values.deployment_server.container.replicaCount | default 1 }}
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: "{{ $name }}-{{ $env }}"
+  namespace: {{ $namespace }}
+  labels:
+    app: "{{ $appName }}-{{ $env }}"
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ $replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: "{{ $appName }}-{{ $env }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ $appName }}-{{ $env }}"
+        deploymentconfig: "{{ $name }}-{{ $env }}"
+    spec:
+      volumes:
+        - name: "{{ $storageName }}-pv-{{ $env }}"
+          persistentVolumeClaim:
+            claimName: "{{ $storageName }}-pvc-{{ $env }}"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: agentpool
+                operator: In
+                values:
+                - "{{ $nodeAffintyLabel }}"
+      tolerations:
+        - key: "sku"
+          operator: "Equal"
+          value: "gpu"
+          effect: NoSchedule      
+      containers:
+        - command: {{- range .Values.deployment_server.container.command }}
+            - {{ . | quote }}
+                   {{- end }}
+          name: "{{ $name }}-{{ $env }}"
+          image: "{{ $registry }}/{{ $imageName }}:{{ $versionTag }}"
+          resources:
+            limits:
+              nvidia.com/gpu: {{ $requestGpu }}  # requesting 1 GPU          
+          volumeMounts:
+            - name: "{{ $storageName }}-pv-{{ $env }}"
+              mountPath: /data
+          env:
+            - name: RABBIT_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RABBIT_HOST
+            - name: RABBIT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RABBIT_PORT
+            - name: RABBIT_VHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RABBIT_VHOST            
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "rabbit-{{ $env }}-secret"
+                  key: username
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "rabbit-{{ $env }}-secret"
+                  key: password
+            - name: SERVER_MULTITHREAD
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SERVER_MULTITHREAD
+            - name: SERVER_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SERVER_NAME
+            - name: SERVER_CONNECTION
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SERVER_CONNECTION
+            - name: LOCAL_DATA_RUN
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LOCAL_DATA_RUN
+            - name: STORAGE_DATA_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: STORAGE_DATA_PATH
+            - name: STORAGE_DATA_PATH_2
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: STORAGE_DATA_PATH_2
+            - name: PHOTOSPHERA_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: PHOTOSPHERA_PATH
+            - name: DTM_PATHS
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DTM_PATHS
+            - name: GLTF_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: GLTF_PATH
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: TZ
+            - name: LOG_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LOG_DIR
+            - name: DTM_BIASES
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DTM_BIASES
+            - name: EGM_FILE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EGM_FILE
+            - name: LOCAL_HEIGHT_SHIFT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LOCAL_HEIGHT_SHIFT
+            - name: GEOSYS
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: GEOSYS
+            - name: EXIST_SHP
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EXIST_SHP
+            - name: PS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: PS_URL
+            - name: HIP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: HIP_URL
+            - name: SINGLE_LOG_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SINGLE_LOG_SIZE
+            - name: MAX_LOG_FILES
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: MAX_LOG_FILES
+            - name: FILE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: FILE_LOG_LEVEL
+            - name: CNSL_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: CNSL_LOG_LEVEL
+            - name: ALGO_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: ALGO_PATH
+            - name: LOG_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LOG_NAME                 
+            - name: HYBRID_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: HYBRID_PATH                  
+            - name: CITYJSON_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: CITYJSON_PATH                  
+            - name: RUN_W_DSM
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RUN_W_DSM                  
+            - name: DTM_XML_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DTM_XML_PATH                  
+            - name: DSM_PATHS
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DSM_PATHS                  
+            - name: DSM_BIASES
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DSM_BIASES                                    
+            - name: DEV
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DEV                  
+            - name: STARGATE_OPENING_HOST_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: STARGATE_OPENING_HOST_PORT                  
+            - name: TEMP_RESULTS
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: TEMP_RESULTS                  
+            - name: TEMP_RESULTS_Y
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: TEMP_RESULTS_Y                  
+            - name: GATE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: GATE_HOST  
+            - name: GATE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: GATE_PORT  
+            - name: DEV_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DEV_PORT  
+            - name: NON_DEV_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: NON_DEV_PORT  
+            - name: VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: VERSION  
+            - name: BASEPATHTEST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: BASEPATHTEST  
+            - name: MEMCACHED_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: MEMCACHED_HOST                    
+            - name: MEMCACHED_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: MEMCACHED_PORT
+
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+---

@@ -1,0 +1,210 @@
+appName: sr-algo
+env: azure
+tz: Asia/Jerusalem
+version: 2.0.0
+versionTag: 1.0.5_2.0.6_deploy
+geosys: Elipsoid
+logo: python
+namespace: sr-algo-azure
+
+algo_path: /data/bereshit-algo
+
+server_config:
+  multithread: 0
+  name: Bereshit_QA
+  connection: 10.14.1.88
+  dev_port: 4001
+  non_dev_port: 4000
+
+hip_url: http://lmy-360-qa-new:3000/point/ps/   
+
+stargate_opening_host_port: http://omer-laptop:2023
+
+rabbit_config:
+  host: 10.0.10.8
+  vhost: ''
+  port: 5682
+  user: bla
+  password: blabla 
+
+ps_config:
+  path: /data
+  url: http://10.0.10.4/services/
+
+sr_gate_config:
+   host: 10.14.1.53
+   port: 4052
+
+dtm_config:
+    paths: 
+     - DTM/Ayosh/DTM_AOI2_addEGM_WGS84.tif
+     - DTM/dtm_meimad_10m_w84geo/dtm_meimad_10m_w84geo_EGM.tif
+     - DTM/SRTM_EGM2/SRTM_EGM.tif
+    biases: 
+      - 0
+      - 0
+      - 0
+    xml_path: DTM/SRTM_ISRAEL.xml
+    
+dsm_config: 
+   paths: null
+   biases: null
+
+logs:
+  dir: /data/bereshit-algo/Algo-Logs
+  levels:
+    file: DEBUG
+    cnsl: INFO
+  max_files: 500    
+  name: algo_docker1   
+  size: 5242880
+
+memcached:
+  host: 10.0.10.15
+  port: 11211  
+
+base_paths:
+  storage_data:
+    - /data
+    - /data
+  gltf: /data/RB/Estates
+  egm_file: /data/DTM/EGM/egm96-5/egm96-5.tif  
+  hybrid: /data/RB/Hybrids
+  cityJson: /data/bereshit-algo/configs/dalia_bereshit_cityJson.json  
+  temp:
+    results: C:/LMY/docker/facade/results
+    results_y: /data/Data/Bereshit/temp   
+  base_path_test: /data/Dev/TestDataGit/lmyalgo 
+    
+config_flags: 
+  dev: 1
+  exist_shp: 0
+  local_data_run: 0
+  local_height_shift: 0
+  run_w_dsm: 0
+  
+imageName: lmyalgo_services
+images_limit: 2
+is_created_texture: 0
+is_gpu_machine_up: 0
+
+network:
+  deployment: sr-algo
+  name: sr-algo
+  hostName: sr-algo.azure.io
+  port: 8000
+  targetPort: 8000
+
+registry: devsracr.azurecr.io
+registryPullSecret: acr-secret
+
+storage:
+  accessModes: ReadWriteMany
+  azurestorageaccountkey: bW9jaw==
+  azurestorageaccountname: bW9jaw==
+  name: sr-algo-data
+  secretName: secret-sasrnfsdev-1
+  shareName: data
+  storageCapacity: 100Gi
+  storageClassName: azure-file-sc
+  storageRequest: 50Gi
+
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 20
+  targetCPUUtilizationPercentage: 80
+nodeAffinityLabel: default
+
+deployment_server:
+  container:
+    #argument: GatewayService
+    containerPort: 8000
+    replicaCount: 20
+    requestGpu: 1
+    command: 
+      - python
+      - app.py
+  name: sr-algo
+
+deployment_rest:
+  - container:
+      command:
+       - extraction_ms
+      replicaCount: 5
+    name: sr-extraction-ms
+  - container:
+      command: 
+       - lod2LsExtraction_ms
+      replicaCount: 5
+    name: sr-lod2-ls-extraction-ms
+  - container:
+      command: 
+        - mapExtent2File_ms
+      replicaCount: 1
+    name: sr-map-extent-2file-ms
+  - container:
+      command: 
+         - tileIndexPC_ms
+      replicaCount: 1
+    name: sr-tile-index-pc-ms
+  - container:
+      command: 
+        - algoGetStatus_ms
+      replicaCount: 2
+    name: sr-algo-get-status-ms
+  - container:
+      command: 
+       - treesUpdates_ms
+      replicaCount: 5
+    name: sr-trees-updates-ms
+  - container:
+      command: 
+        - addAttributes2Cityjson_ms
+      replicaCount: 5
+    name: sr-add-attributes-2cityjson-ms
+  - container:
+      command: 
+        - cityjsonsFusion_ms
+      replicaCount: 5
+    name: sr-cityjsons-fusion-ms
+  - container:
+      command: 
+        - addLabel2Cityjson_ms
+      replicaCount: 5
+    name: sr-add-label-2cityjson-ms
+  - container:
+      command: 
+        - flatCityjson_ms
+      replicaCount: 5
+    name: sr-flat-cityjson-ms
+  - container:
+      command: 
+        - areaBuffer2d_ms
+      replicaCount: 5
+    name: sr-area-buffer2d-ms
+  - container:
+      command: 
+         - getCityjsonTextures_ms
+      replicaCount: 5
+    name: sr-get-cityjson-textures-ms
+  - container:
+      command: 
+        - polygons2Roofs_ms
+      replicaCount: 5
+    name: sr-polygons-2roofs-ms
+  - container:
+      command: 
+        - gltf2fbx_ms
+      replicaCount: 5
+    name: sr-gltf2fbx-ms
+  - container:
+      command: 
+       - tileset_generator_ms
+      replicaCount: 1
+    name: sr-tileset-generator-ms
+  - container:
+      command: 
+       - create_union_b3dm_ms
+      replicaCount: 5
+    name: sr-create-union-b3dm-ms
