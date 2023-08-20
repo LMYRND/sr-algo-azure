@@ -49,6 +49,9 @@ spec:
           value: "gpu"
           effect: NoSchedule
       containers:
+        - args: {{- range .container.args }}
+            - {{ . | quote }}
+                   {{- end }}
         - command: {{- range .container.command }}
             - {{ . | quote }}
                    {{- end }}
