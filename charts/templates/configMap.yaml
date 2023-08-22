@@ -6,10 +6,10 @@ metadata:
   name: "{{ $namespace }}-{{ $env }}-cm"
   namespace: {{ $namespace }}
 data:
-  SERVER_MULTITHREAD: {{.Values.server_config.multithread}}
+  SERVER_MULTITHREAD: {{.Values.server_config.multithread | quote}}
   SERVER_NAME: {{.Values.server_config.name | quote }}
   SERVER_CONNECTION: {{.Values.server_config.connection | quote}}  
-  LOCAL_DATA_RUN: {{.Values.config_flags.local_data_run }}
+  LOCAL_DATA_RUN: {{.Values.config_flags.local_data_run | quote}}
   {{ with index .Values.base_paths.storage_data 0 }}
   STORAGE_DATA_PATH: {{ . | quote }}
   {{ end }}
@@ -24,42 +24,50 @@ data:
     {{- end }} 
   GLTF_PATH: {{ .Values.base_paths.gltf | quote }}
   LOG_DIR: {{ .Values.logs.dir | quote }}
-  DTM_BIASES: {{- if empty .Values.dtm_config.paths }} null {{else}} {{ toYaml .Values.dtm_config.biases | nindent 4}} {{- end }} 
+  DTM_BIASES: {{- if empty .Values.dtm_config.biases }} null {{else}} 
+{{- range .Values.dtm_config.biases }}  
+    - {{ . | quote }}
+ {{- end }} 
+ {{- end }} 
   EGM_FILE: {{.Values.base_paths.egm_file | quote}}
-  LOCAL_HEIGHT_SHIFT: {{ .Values.config_flags.local_height_shift }}
+  LOCAL_HEIGHT_SHIFT: {{ .Values.config_flags.local_height_shift | quote}}
   GEOSYS: {{ .Values.geosys | quote }}
-  EXIST_SHP: {{ .Values.config_flags.exist_shp }}
+  EXIST_SHP: {{ .Values.config_flags.exist_shp | quote }}
   PS_URL: {{ .Values.ps_config.path | quote }}
   HIP_URL: {{ .Values.hip_url | quote }}
-  SINGLE_LOG_SIZE: {{ .Values.logs.size }}
-  MAX_LOG_FILES: {{ .Values.logs.max_files }}
+  SINGLE_LOG_SIZE: {{ .Values.logs.size | quote }}
+  MAX_LOG_FILES: {{ .Values.logs.max_files | quote }}
   FILE_LOG_LEVEL: {{ .Values.logs.levels.file | quote }}
   CNSL_LOG_LEVEL: {{ .Values.logs.levels.cnsl | quote }}
   ALGO_PATH: {{ .Values.algo_path | quote }}
   LOG_NAME: {{ .Values.logs.name | quote }}
   HYBRID_PATH: {{ .Values.base_paths.hybrid | quote }}
   CITYJSON_PATH: {{ .Values.base_paths.cityJson | quote }}
-  RUN_W_DSM: {{ .Values.config_flags.run_w_dsm }}
+  RUN_W_DSM: {{ .Values.config_flags.run_w_dsm | quote }}
   DTM_XML_PATH: {{ .Values.dtm_config.xml_path | quote }}
   DSM_PATHS: {{- if empty .Values.dsm_config.paths }} null {{else}} 
     {{- range .Values.dsm_config.paths }}
     - {{ . | quote }}
     {{- end }}
     {{- end }}
-  DSM_BIASES: {{- if empty .Values.dsm_config.biases }} null {{else}} {{ toYaml .Values.dsm_config.biases | nindent 4}} {{- end }}
-  DEV: {{ .Values.config_flags.dev }}
+  DSM_BIASES: {{- if empty .Values.dsm_config.biases }} null {{else}}
+{{- range .Values.dsm_config.biases }}  
+    - {{ . | quote }}
+ {{- end }} 
+ {{- end }} 
+  DEV: {{ .Values.config_flags.dev | quote}}
   STARGATE_OPENING_HOST_PORT: {{ .Values.stargate_opening_host_port| quote }}
   TEMP_RESULTS: {{ .Values.base_paths.temp.results | quote }}
   TEMP_RESULTS_Y: {{ .Values.base_paths.temp.results_y | quote }}
   GATE_HOST: {{ .Values.sr_gate_config.host | quote }}
-  GATE_PORT: {{ .Values.sr_gate_config.port }}
-  DEV_PORT: {{ .Values.server_config.dev_port }}
-  NON_DEV_PORT: {{ .Values.server_config.non_dev_port }}
+  GATE_PORT: {{ .Values.sr_gate_config.port | quote }}
+  DEV_PORT: {{ .Values.server_config.dev_port | quote }}
+  NON_DEV_PORT: {{ .Values.server_config.non_dev_port | quote }}
   VERSION: {{ .Values.version | quote }}
   BASEPATHTEST: {{ .Values.base_paths.base_path_test | quote }}
   MEMCACHED_HOST: {{ .Values.memcached.host | quote }}
   MEMCACHED_PORT: {{ .Values.memcached.port | quote }} 
   RABBIT_PORT: {{ .Values.rabbit_config.port | quote }}
   RABBIT_HOST: {{ .Values.rabbit_config.host | quote }}
-  RABBIT_VHOST: {{ .Values.rabbit_config.vhost }}
+  RABBIT_VHOST: {{ .Values.rabbit_config.vhost | quote }}
   TZ: "{{ .Values.tz }}"
