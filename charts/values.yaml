@@ -36,16 +36,9 @@ sr_gate_config:
    port: 4052
 
 dtm_config:
-    paths: 
-     - DTM/Ayosh/DTM_AOI2_addEGM_WGS84.tif
-     - DTM/dtm_meimad_10m_w84geo/dtm_meimad_10m_w84geo_EGM.tif
-     - DTM/SRTM_EGM2/SRTM_EGM.tif
-    biases: 
-      - 0
-      - 0
-      - 0
-    xml_path: DTM/SRTM_ISRAEL.xml
-    
+    paths: DTM/Ayosh/DTM_AOI2_addEGM_WGS84.tif,DTM/dtm_meimad_10m_w84geo/dtm_meimad_10m_w84geo_EGM.tif,DTM/SRTM_EGM2/SRTM_EGM.tif
+    biases: 0,0,0
+    xml_path: DTM/SRTM_ISRAEL.xml   
 dsm_config: 
    paths: null
    biases: null
@@ -103,7 +96,7 @@ storage:
   azurestorageaccountkey: bW9jaw==
   azurestorageaccountname: bW9jaw==
   name: sr-algo-data
-  secretName: secret-sasrnfsdev-1
+  secretName: secret-sr-algo
   shareName: data
   storageCapacity: 100Gi
   storageClassName: azure-file-sc
