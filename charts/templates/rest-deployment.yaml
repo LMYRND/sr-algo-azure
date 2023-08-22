@@ -52,7 +52,7 @@ spec:
         - args: {{- range .container.args }}
             - {{ . | quote }}
                    {{- end }}
-        - command: {{- range .container.command }}
+          command: {{- range .container.command }}
             - {{ . | quote }}
                    {{- end }}
           name: "{{ .name }}-{{ $env }}"
