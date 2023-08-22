@@ -213,6 +213,8 @@ deployment_rest:
       replicaCount: 5
     name: sr-polygons-2roofs-ms
   - container:
+      command:
+      - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - gltf2fbx_ms
       replicaCount: 5
