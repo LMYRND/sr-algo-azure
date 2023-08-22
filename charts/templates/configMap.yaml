@@ -13,10 +13,10 @@ data:
   STORAGE_DATA_PATH: {{ . | quote }} {{ end }} {{ with index .Values.base_paths.storage_data 1 }}
   STORAGE_DATA_PATH_2: {{ . | quote }} {{ end }}
   PHOTOSPHERA_PATH: {{ .Values.ps_config.path | quote }}
-  DTM_PATHS: {{- if empty .Values.dtm_config.paths }} null {{else}} {{ .Values.dtm_config.paths | quote }} {{- end }}
+  DTM_PATHS: {{ .Values.dtm_config.paths | quote }}
   GLTF_PATH: {{ .Values.base_paths.gltf | quote }}
   LOG_DIR: {{ .Values.logs.dir | quote }}
-  DTM_BIASES: {{- if empty .Values.dtm_config.biases }} null {{else}} {{ .Values.dtm_config.biases | quote }}  {{- end }}
+  DTM_BIASES: {{ .Values.dtm_config.biases | quote }}
   EGM_FILE: {{.Values.base_paths.egm_file | quote}}
   LOCAL_HEIGHT_SHIFT: {{ .Values.config_flags.local_height_shift | quote}}
   GEOSYS: {{ .Values.geosys | quote }}
@@ -33,8 +33,8 @@ data:
   CITYJSON_PATH: {{ .Values.base_paths.cityJson | quote }}
   RUN_W_DSM: {{ .Values.config_flags.run_w_dsm | quote }}
   DTM_XML_PATH: {{ .Values.dtm_config.xml_path | quote }}
-  DSM_PATHS: {{- if empty .Values.dsm_config.paths }} null {{else}} {{ .Values.dsm_config.paths | quote }} {{- end }}
-  DSM_BIASES: {{- if empty .Values.dsm_config.biases }} null {{else}} {{ .Values.dsm_config.biases | quote }} {{- end }} 
+  DSM_PATHS: {{ .Values.dsm_config.paths | quote }}
+  DSM_BIASES: {{ .Values.dsm_config.biases | quote }}
   DEV: {{ .Values.config_flags.dev | quote}}
   STARGATE_OPENING_HOST_PORT: {{ .Values.stargate_opening_host_port| quote }}
   TEMP_RESULTS: {{ .Values.base_paths.temp.results | quote }}
