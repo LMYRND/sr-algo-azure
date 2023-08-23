@@ -5,6 +5,8 @@ kind: "ConfigMap"
 metadata:
   name: "{{ $namespace }}-{{ $env }}-cm"
   namespace: {{ $namespace }}
+  annotations: 
+   argocd.argoproj.io/sync-options: Replace=true
 data:
   SERVER_MULTITHREAD: {{.Values.server_config.multithread | quote}}
   SERVER_NAME: {{.Values.server_config.name | quote }}
