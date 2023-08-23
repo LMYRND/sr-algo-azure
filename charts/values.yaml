@@ -48,9 +48,9 @@ logs:
   levels:
     file: DEBUG
     cnsl: INFO
-  max_files: 500    
+  max_files: 50
   name: algo_docker1   
-  size: 5242880
+  size: 50000
 
 memcached:
   host: 10.0.10.15
