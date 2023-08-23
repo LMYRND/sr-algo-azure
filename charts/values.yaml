@@ -114,7 +114,7 @@ deployment_server:
     #argument: GatewayService
     containerPort: 8000
     replicaCount: 1
-    requestGpu: 1
+    requestGpu: 0
     command: 
       - python
       - app.py
