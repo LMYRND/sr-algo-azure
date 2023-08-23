@@ -32,8 +32,8 @@ ps_config:
   url: http://10.0.10.4/services/
 
 sr_gate_config:
-   host: 10.14.1.53
-   port: 4052
+   host: 192.168.115.21
+   port: 30508
 
 dtm_config:
     paths: DTM/Ayosh/DTM_AOI2_addEGM_WGS84.tif,DTM/dtm_meimad_10m_w84geo/dtm_meimad_10m_w84geo_EGM.tif,DTM/SRTM_EGM2/SRTM_EGM.tif
