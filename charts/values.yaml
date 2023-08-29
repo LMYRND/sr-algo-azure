@@ -113,7 +113,7 @@ deployment_server:
   container:
     #argument: GatewayService
     containerPort: 8000
-    replicaCount: 1
+    replicaCount: 3
     requestGpu: 0
     command: 
       - python
@@ -126,110 +126,110 @@ deployment_rest:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args:
        - extraction_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-extraction-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
        - lod2LsExtraction_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-lod2-ls-extraction-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh      
       args: 
         - mapExtent2File_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-map-extent-2file-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
          - tileIndexPC_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-tile-index-pc-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - algoGetStatus_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-algo-get-status-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
        - treesUpdates_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-trees-updates-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - addAttributes2Cityjson_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-add-attributes-2cityjson-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - cityjsonsFusion_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-cityjsons-fusion-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - addLabel2Cityjson_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-add-label-2cityjson-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - flatCityjson_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-flat-cityjson-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - areaBuffer2d_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-area-buffer2d-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
          - getCityjsonTextures_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-get-cityjson-textures-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - polygons2Roofs_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-polygons-2roofs-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
         - gltf2fbx_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-gltf2fbx-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
        - tileset_generator_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-tileset-generator-ms
   - container:
       command:
       - /app/EstatesWizardSrc/ms_routes/run.sh
       args: 
        - create_union_b3dm_ms
-      replicaCount: 1
+      replicaCount: 3
     name: sr-create-union-b3dm-ms
