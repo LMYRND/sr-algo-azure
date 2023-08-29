@@ -43,11 +43,11 @@ spec:
                 operator: In
                 values:
                 - "{{ $nodeAffintyLabel }}"
-      tolerations:
-        - key: "sku"
-          operator: "Equal"
-          value: "gpu"
-          effect: NoSchedule      
+      # tolerations:
+      #   - key: "sku"
+      #     operator: "Equal"
+      #     value: "gpu"
+      #     effect: NoSchedule      
       containers:
         - command: {{- range .Values.deployment_server.container.command }}
             - {{ . | quote }}
