@@ -118,6 +118,8 @@ deployment_server:
     command: 
       - python
       - app.py
+      - "--port"
+      - 8003
   name: sr-algo
 
 deployment_rest:
