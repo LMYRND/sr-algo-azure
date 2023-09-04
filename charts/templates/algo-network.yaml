@@ -25,9 +25,8 @@ metadata:
   name: "{{ .name }}-{{ $env }}"
   namespace: {{ $namespace }}
   annotations:
-    nginx.org/proxy-connect-timeout: 3600s
-    nginx.org/proxy-read-timeout: 3600s
-    nginx.org/proxy-send-timeout: 3600s
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     ingress.kubernetes.io/proxy-body-size: 100M
     ingress.kubernetes.io/app-root: "/"
 spec:
