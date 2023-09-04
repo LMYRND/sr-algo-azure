@@ -113,13 +113,13 @@ deployment_server:
   container:
     #argument: GatewayService
     containerPort: 8000
-    replicaCount: 1
+    replicaCount: 5
     requestGpu: 0
     command: 
       - python
       - app.py
       - "--port"
-      - 8003
+      - 8000
   name: sr-algo
 
 deployment_rest:
