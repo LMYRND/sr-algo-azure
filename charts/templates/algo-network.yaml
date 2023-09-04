@@ -45,7 +45,7 @@ spec:
           service:
             name: "{{ .name }}-{{ $env }}"
             port:
-              number: {{ .targetPort }}
+              number: {{ .port }}
    
 ---
 {{- end }}
