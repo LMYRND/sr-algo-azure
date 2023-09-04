@@ -86,7 +86,7 @@ network:
   name: sr-algo
   hostName: sr-algo.azure.io
   port: 9000
-  targetPort: 8003
+  targetPort: 8000
 
 registry: devsracr.azurecr.io
 registryPullSecret: acr-secret
